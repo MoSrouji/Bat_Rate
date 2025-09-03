@@ -3,14 +3,19 @@ package com.example.myapplication.ui.auth.presentaiton.authentication.user_detai
 
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.snapshots.Snapshot.Companion.global
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.savedstate.savedState
 import com.example.myapplication.auth.domain.entities.Response
 import com.example.myapplication.ui.auth.presentaiton.authentication.user_detail.component.TopBar
 import com.example.myapplication.ui.auth.presentaiton.authentication.user_detail.component.UpdateUserDetailContent
@@ -68,10 +73,11 @@ fun UpdateUserDetailScreen(
                 viewModel.logout()
             },
         )
+
+        }
         if (logOutState is Response.Loading) {
             CircularProgressIndicator()
         }
 
     }
-}
 

@@ -143,7 +143,7 @@ fun MovieDetailScreen(
                         onBookMarkClick = {
                             val userId = FirebaseAuth.getInstance().currentUser?.uid
                             if (userId != null && state.movieDetail != null) {
-                                movieDetailViewModel.addWatch(
+                                movieDetailViewModel.addWatchLater(
                                     labelName = saveToWatchLaterLabel,
                                 )
                             } else {
@@ -157,7 +157,7 @@ fun MovieDetailScreen(
                         onWatchedClick = {
                             val userId = FirebaseAuth.getInstance().currentUser?.uid
                             if (userId != null && state.movieDetail != null) {
-                                movieDetailViewModel.addWatch(
+                                movieDetailViewModel.addWatched(
                                     labelName = saveToWatchedLabel,
                                 )
                             } else {

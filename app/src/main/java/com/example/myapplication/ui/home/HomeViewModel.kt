@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.myapplication.movie.domain.models.Movie
 import com.example.myapplication.movie.domain.repository.MovieRepository
 import com.example.myapplication.ui.saved_movies.SavedMoviesViewModel
+import com.example.myapplication.ui.search.SearchScreen
+import com.example.myapplication.ui.search.SearchViewModel
 import com.example.myapplication.utils.collectAndHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -101,6 +103,8 @@ fun selectedMovie(movie: Movie){
 data class HomeState(
     val movie: Movie ?=null,
     val searchMovies: List<Movie> = emptyList(),
+    val filterSearchMovies: List<Movie> = emptyList(),
+    val tempSearchMovies: List<Movie> = emptyList(),
     val discoverMovies: List<Movie> = emptyList(),
     val trendingMovies: List<Movie> = emptyList(),
     val error: String? = null,

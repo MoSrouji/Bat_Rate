@@ -50,7 +50,7 @@ class DetailViewModel @Inject constructor(
 
 
 
-    fun addWatch(labelName: String, movieId: Int = id) {
+    fun addWatchLater(labelName: String, movieId: Int = id) {
         viewModelScope.launch {
             _userState.value = WatchLaterUiState.Loading
             try {
@@ -59,6 +59,20 @@ class DetailViewModel @Inject constructor(
                     movieId = movieId
                 )
                 _userState.value = WatchLaterUiState.Success("Added to Watch Later")
+            } catch (e: Exception) {
+                Log.e("DetailViewModel", "Error adding to watch later :${e.message}")
+            }
+        }
+    }
+fun addWatched(labelName: String, movieId: Int = id) {
+        viewModelScope.launch {
+            _usersState.value = WatchLaterUiState.Loading
+            try {
+                userRepository.addWatch(
+                    labelName = labelName,
+                    movieId = movieId
+                )
+                _usersState.value = WatchLaterUiState.Success("Added to Watch Later")
             } catch (e: Exception) {
                 Log.e("DetailViewModel", "Error adding to watch later :${e.message}")
             }

@@ -21,8 +21,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val repository: MovieRepository ,
-    private val searchBrowserRepository : SaveListRepo
+    private val repository: MovieRepository,
+    private val searchBrowserRepository: SaveListRepo
 ) : ViewModel() {
 
     private val _searchState = MutableStateFlow(HomeState())
@@ -32,25 +32,29 @@ class SearchViewModel @Inject constructor(
 
     var expanded by mutableStateOf(false)
 
-    var browseHistory : List<String> = mutableListOf()
+    var browseHistory: List<String> = mutableListOf()
 
-    fun onBtnCLick(){
+
+    var filteredMoviesList: MutableList<String> = mutableListOf()
+
+
+    fun onBtnCLick() {
         searchMovies(query)
         saveBrowseData()
     }
 
 
-
     fun onTextChanged(newText: String) {
         query = newText
     }
+
     fun onExpandedChanged(expand: Boolean) {
-         expanded = expand
+        expanded = expand
     }
 
-init {
-    getBrowserData()
-}
+    init {
+        getBrowserData()
+    }
 
     private fun searchMovies(movieName: String) = viewModelScope.launch {
         repository.searchMovie(movieName, "").collectAndHandle(
@@ -69,14 +73,15 @@ init {
             _searchState.update {
                 it.copy(
                     isLoading = false, error = null,
-                    searchMovies = movie
+                    searchMovies = movie,
                 )
             }
+            saveSearchState()
 
         }
     }
 
-    private fun saveBrowseData(){
+    private fun saveBrowseData() {
         viewModelScope.launch {
             try {
                 searchBrowserRepository.searchHistory(query, "searchHistory")
@@ -86,14 +91,50 @@ init {
         }
     }
 
-    private fun getBrowserData(){
+    private fun getBrowserData() {
         viewModelScope.launch {
             try {
-               browseHistory = searchBrowserRepository.getSearchHistory("searchHistory")
-            }catch (e: Exception){
+                browseHistory = searchBrowserRepository.getSearchHistory("searchHistory")
+            } catch (e: Exception) {
             }
         }
 
+    }
+
+    fun filterSearch(genre: List<String> = filteredMoviesList) {
+        viewModelScope.launch {
+            try {
+
+                _searchState.update {
+                    it.copy(
+                        searchMovies = it.searchMovies.filter { movie ->
+                            movie.genreIds.containsAll(genre)
+                        }
+                    )
+                }
+
+
+            } catch (e: Exception) {
+
+            }
+        }
+
+    }
+
+    fun resetSearch() {
+        _searchState.update {
+            it.copy(
+                searchMovies = it.tempSearchMovies
+            )
+        }
+    }
+
+    fun saveSearchState() {
+        _searchState.update {
+            it.copy(
+                tempSearchMovies = it.searchMovies
+            )
+        }
     }
 
 

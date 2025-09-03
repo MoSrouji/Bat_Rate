@@ -1,4 +1,4 @@
-package com.example.myapplication.ui.saved_movies
+package com.example.myapplication.ui.saved_movies.component
 
 
 import androidx.compose.foundation.clickable
@@ -39,7 +39,6 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.myapplication.R
-import com.example.myapplication.movie.domain.models.Movie
 import com.example.myapplication.movie_detail.domain.models.MovieDetail
 import com.example.myapplication.ui.home.components.MovieCard
 import com.example.myapplication.ui.home.itemSpacing

@@ -1,6 +1,6 @@
-package com.example.myapplication.ui.saved_movies
+package com.example.myapplication.ui.saved_movies.component
 
-import android.annotation.SuppressLint
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -12,24 +12,27 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.myapplication.ui.home.itemSpacing
-import androidx.compose.runtime.getValue
 import com.example.myapplication.movie_detail.domain.models.MovieDetail
+import com.example.myapplication.ui.saved_movies.SavedMoviesState
+import com.example.myapplication.ui.saved_movies.SavedMoviesViewModel
 
 @Composable
 fun SavedMoviesScreen(
     viewModel: SavedMoviesViewModel = hiltViewModel(),
-            onMovieClick :(Int)-> Unit,
-    modifier: Modifier
+    onMovieClick: (Int) -> Unit,
+    modifier: Modifier,
+    state: SavedMoviesState
+
 ) {
-    val state by viewModel.uiState.collectAsState()
     Box(
-        modifier = Modifier.fillMaxSize().padding(top=60.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 60.dp),
         contentAlignment = Alignment.Center
     ) {
         when {
@@ -47,35 +50,39 @@ fun SavedMoviesScreen(
             state.error != null -> {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text("Error: ${state.error}")
-                    Button(onClick = { viewModel.refresh() }) {
+                    Button(onClick = { }) {
                         Text("Retry")
                     }
                 }
             }
+
             else -> {
-               // MovieIdsList(state.movieIds)
+                // MovieIdsList(state.movieIds)
                 Spacer(modifier = Modifier.padding(itemSpacing))
 
 
-                when{
-                   state.isMovieLoading ->{
+                when {
+                    state.isMovieLoading -> {
                         CircularProgressIndicator()
                         Spacer(modifier = Modifier.padding(itemSpacing))
                         Text("Loading")
 
                     }
-                    state.error!=null->{
+
+                    state.error != null -> {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text("Error: ${state.error}")
-                            Button(onClick = { viewModel.refresh() }) {
+                            Button(onClick = { }) {
                                 Text("Retry")
                             }
                         }
                     }
-                    else ->{
+
+                    else -> {
                         Spacer(modifier = Modifier.padding(itemSpacing))
 
-                        ShowMovies(state.movieDetailList , onMovieClick)                    }
+                        ShowMovies(state.movieDetailList, onMovieClick)
+                    }
                 }
 
 
@@ -84,34 +91,25 @@ fun SavedMoviesScreen(
     }
 }
 
+
 @Composable
-fun MovieIdsList(movieIds: List<*>) {
+fun ShowMovies(
+    movies: List<MovieDetail>,
+    onMovieClick: (Int) -> Unit
+) {
+
     LazyColumn(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .padding(vertical = itemSpacing)
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.Top
     ) {
-        items(movieIds) { movieId ->
-            Text(
-                text = "Movie ID: ${movieId.toString()}", // Safe conversion
-                modifier = Modifier.padding(16.dp)
-            )
-        }
-    }
-}
-
-@Composable
-fun ShowMovies(movies: List<MovieDetail> ,
-               onMovieClick :(Int)-> Unit)
-{
-
-    LazyColumn(modifier = Modifier.padding(vertical = itemSpacing)) {
-        items(movies){
-            movie->
+        items(movies) { movie ->
             MovieDetailCard(
                 movie = movie,
                 onMovieClick = onMovieClick
             )
         }
-
 
 
     }

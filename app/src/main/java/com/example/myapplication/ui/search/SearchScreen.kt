@@ -34,6 +34,7 @@ import com.example.myapplication.ui.components.LoadingView
 import com.example.myapplication.ui.home.itemSpacing
 import com.example.myapplication.ui.moviesScreenDiscoverAndTrending.MovieCardShow
 import com.example.myapplication.ui.search.component.SearchHistoryCard
+import com.example.myapplication.ui.search.component.SegmentedButtonMultiSelectSample
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -117,29 +118,32 @@ fun SearchScreen(
                     }
                 }
 
-                Text(
-                    text = "The Result : ",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                )
 
 
-                LazyColumn(modifier = Modifier.padding(vertical = itemSpacing)) {
-                    items(state.searchMovies) {
-                        MovieCardShow(
-                            movie = it,
-                            onMovieClick = onMovieClick,
-                            onSavedClick = {},
+                    SegmentedButtonMultiSelectSample()
+                    Text(
+                        text = "The Result : ",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+
                         )
+
+                    LazyColumn(modifier = Modifier.padding(vertical = itemSpacing)) {
+                        items(state.searchMovies) {
+                            MovieCardShow(
+                                movie = it,
+                                onMovieClick = onMovieClick,
+                                onSavedClick = {},
+                            )
+                        }
                     }
                 }
-
 
 
             }
         }
         LoadingView(isLoading = state.isLoading)
     }
-}
+
 
 

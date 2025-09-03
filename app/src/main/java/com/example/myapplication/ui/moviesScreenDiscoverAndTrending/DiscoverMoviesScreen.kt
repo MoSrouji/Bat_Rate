@@ -116,7 +116,7 @@ fun DiscoverMoviesScreen(
                             onSavedClick = {
                                 val userId = FirebaseAuth.getInstance().currentUser?.uid
                                 if (userId != null && state.movie != null) {
-                                    movieDetailViewModel.addWatch(
+                                    movieDetailViewModel.addWatchLater(
                                         labelName = saveToWatchLaterLabel,
                                         movieId = state.movie!!.id
                                     )

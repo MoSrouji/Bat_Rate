@@ -68,6 +68,7 @@ dependencies {
     implementation(libs.googleid)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.room.ktx)
+    implementation(libs.material3)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

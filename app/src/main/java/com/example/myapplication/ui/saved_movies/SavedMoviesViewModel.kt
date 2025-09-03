@@ -2,7 +2,6 @@ package com.example.myapplication.ui.saved_movies
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.example.myapplication.movie.domain.models.Movie
 import com.example.myapplication.movie_detail.domain.models.MovieDetail
 import com.example.myapplication.movie_detail.domain.repository.MovieDetailRepository
 import com.example.myapplication.save_list.domain.repository.SaveListRepo
@@ -15,34 +14,37 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.awaitAll
+import com.example.myapplication.auth.domain.repositories.AuthRepository
+import com.example.myapplication.auth.user_detail.domain.repository.UserDetailRepo
+import com.example.myapplication.ui.detail.WatchLaterUiState
 
 @HiltViewModel
 class SavedMoviesViewModel @Inject constructor(
     private val savedRepository: SaveListRepo ,
-    private val repository : MovieDetailRepository
+    private val repository : MovieDetailRepository,
 ) : ViewModel() {
 
 
 
-    private val _uiState = MutableStateFlow(SavedMoviesState())
-    val uiState: StateFlow<SavedMoviesState> = _uiState.asStateFlow()
-
-    val movieDetailList: MutableList<MovieDetail> = mutableListOf()
+    private val _watchLaterState = MutableStateFlow(SavedMoviesState())
+    val watchLaterState: StateFlow<SavedMoviesState> = _watchLaterState.asStateFlow()
+    private val _watchedState = MutableStateFlow(SavedMoviesState())
+    val watchedState: StateFlow<SavedMoviesState> = _watchedState.asStateFlow()
 
     init {
-        loadSavedMovies()
+        loadSavedMovies("saveToWatchLater",_watchLaterState)
+        loadSavedMovies("saveToWatched",_watchedState)
     }
 
-    fun loadSavedMovies() {
+   internal fun loadSavedMovies(label: String , state: MutableStateFlow<SavedMoviesState> ) {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, error = null) }
+            state.update { it.copy(isLoading = true, error = null) }
 
             try {
-                val savedMovies = savedRepository.getSavedMovies("saveToWatched")
+                val savedMovies = savedRepository.getSavedMovies(label)
                 Log.d("SavedMovies", "Loaded saved movies: ${savedMovies.size}")
 
-                _uiState.update {
+                state.update {
                     it.copy(
                         isLoading = false,
                         movieIds = savedMovies,
@@ -52,11 +54,11 @@ class SavedMoviesViewModel @Inject constructor(
 
                 }
                 if (savedMovies.isNotEmpty()){
-                    fetchMovieDetails(savedMovies)
+                    fetchMovieDetails(savedMovies , state)
                 }
             } catch (e: Exception) {
                 Log.e("SavedMovies", "Error loading saved movies: ${e.message}", e)
-                _uiState.update {
+                _watchLaterState.update {
                     it.copy(
                         isLoading = false,
                         error = e.message ?: "Failed to load saved movies",
@@ -71,18 +73,18 @@ class SavedMoviesViewModel @Inject constructor(
 
 
 
-    fun refresh() {
-        loadSavedMovies()
-    }
+//    fun refresh() {
+//        loadSavedMovies(label = "saveToWatched")
+//    }
+//
+//    fun clearError() {
+//        _watchLaterState.update { it.copy(error = null) }
+//    }
 
-    fun clearError() {
-        _uiState.update { it.copy(error = null) }
-    }
 
-
-    private fun fetchMovieDetails(movieIds: List<Int>) {
+    private fun fetchMovieDetails(movieIds: List<Int> , state: MutableStateFlow<SavedMoviesState>) {
         viewModelScope.launch {
-            _uiState.update { it.copy(isMovieLoading = true, error = null) }
+            state.update { it.copy(isMovieLoading = true, error = null) }
 
             val movieDetails = mutableListOf<MovieDetail>()
             val errors = mutableListOf<String>()
@@ -99,7 +101,7 @@ class SavedMoviesViewModel @Inject constructor(
                     },
                      { movieDetail ->
                         movieDetails.add(movieDetail)
-                        _uiState.update { currentState ->
+                       state.update { currentState ->
                             currentState.copy(
                                 movieDetailList = currentState.movieDetailList + movieDetail,
                                 isMovieLoading = movieDetails.size < movieIds.size
@@ -110,7 +112,7 @@ class SavedMoviesViewModel @Inject constructor(
             }
 
             // Final state update
-            _uiState.update {
+          state.update {
                 it.copy(
                     isMovieLoading = false,
                     error = if (errors.isNotEmpty()) errors.joinToString("\n") else null,
@@ -125,53 +127,6 @@ class SavedMoviesViewModel @Inject constructor(
 
 
 
-
-
-    fun fetchMovieDetailById() = viewModelScope.launch {
-        if (uiState.value.movieIds.isEmpty()) {
-            _uiState.update {
-                it.copy(
-                    isMovieLoading  = false,
-                    error = "Movie not found :)"
-                )
-            }
-        } else {
-
-           uiState.value.movieIds.forEach { ids ->
-               repository.fetchMovieDetail(ids ).collectAndHandle(
-                onError = { error ->
-                    _uiState.update {
-                        it.copy(
-                            isMovieLoading = false,
-                            error = error?.message
-                        )
-                    }
-
-                },
-                onLoading = {
-                    _uiState.update {
-                        it.copy(isMovieLoading = true, error = null)
-                    }
-                },
-                { movieDetail ->
-
-                    _uiState.update {
-                        it.copy(
-                            isMovieLoading = false,
-                            error = null,
-                            movieDetail = movieDetail ,
-                        )
-
-                    }
-                    movieDetailList.add(movieDetail)
-
-                }
-            )
-
-
-        }
-        }
-    }
 
 }
 

@@ -5,7 +5,7 @@ data class User(
     val fullName: String?=null,
     val email: String?=null,
     val bio : String?=null,
-    val saveToWatchLater: MutableMap<String , String> ? = mutableMapOf(),
-    val saveToWatched: MutableMap<String , String> ? =mutableMapOf(),
+    val saveToWatchLater: List<Int> = emptyList<Int>(),
+    val saveToWatched: List<Int> = emptyList<Int>(),
     val searchHistory: MutableList<String > ? =mutableListOf(),
 )

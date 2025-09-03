@@ -26,6 +26,7 @@ class UserDetailViewModel @Inject constructor(
     val logOutState :StateFlow<Response<Boolean>?> = _logOutState
 
     private val _userState = mutableStateOf<User?>(null)
+
     val userState: State<User?> = _userState
 
     private val _loadingState = mutableStateOf(false)

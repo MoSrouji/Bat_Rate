@@ -45,12 +45,7 @@ fun HomeScreen(
     onTradingArrowClick: () -> Unit,
 
 ) {
-    val onBookMarkClick: (Movie) -> Unit = { movie ->
-        homeViewModel.selectedMovie(movie)
-    }
-    val context = LocalContext.current
 
-    val saveToWatchLaterLabel: String = "saveToWatchLater"
     var isAutoScrolling by remember {
         mutableStateOf(true)
     }
@@ -146,7 +141,7 @@ fun HomeScreen(
                     onMovieClick = onMovieClick,
                     onTradingArrowClick = onTradingArrowClick,
                     onDiscoverArrowClick = onDiscoverArrowClick,
-                    onBookMarkClick = onBookMarkClick  )
+                 onBookMarkClick = { }  )
 
 
 
@@ -167,3 +162,9 @@ fun HomeScreen(
 
 
 
+//    val onBookMarkClick: (Movie) -> Unit = { movie ->
+//        homeViewModel.selectedMovie(movie)
+//    }
+//       //val context = LocalContext.current
+////
+////    val saveToWatchLaterLabel: String = "saveToWatchLater"
