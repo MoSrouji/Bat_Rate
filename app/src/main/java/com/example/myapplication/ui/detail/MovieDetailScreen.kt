@@ -5,11 +5,13 @@ import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Bookmarks
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -20,13 +22,16 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.myapplication.navigation.NavAnimations
+import com.example.myapplication.navigation.navigateToMovieDetailScreen
 import com.example.myapplication.ui.components.LoadingView
 import com.example.myapplication.ui.detail.components.DetailBodyContent
 import com.example.myapplication.ui.detail.components.DetailTopContent
+import com.example.myapplication.ui.detail.components.MoreLikeThis
 import com.google.firebase.auth.FirebaseAuth
 
 
@@ -38,21 +43,24 @@ fun MovieDetailScreen(
     onNavigateUP: () -> Unit,
     onMovieClick: (Int) -> Unit,
     onActorClick: (Int) -> Unit,
+    navToSignIn:()-> Unit
+  //  iconButton: ImageVector
 ) {
 
 
     val state = movieDetailViewModel.detailState.collectAsStateWithLifecycle().value
-
     val watchedState = movieDetailViewModel.userState.collectAsStateWithLifecycle().value
     val watchLaterState = movieDetailViewModel.usersState.collectAsStateWithLifecycle().value
+    val saveToWatchLaterLabel: String = "saveToWatchLater"
+    val saveToWatchedLabel: String = "saveToWatched"
+    val context = LocalContext.current
+
 
 
     val ratingState by movieDetailViewModel.ratingState.collectAsState()
     val userRating by movieDetailViewModel.userRating.collectAsState()
-    val userReview by movieDetailViewModel.userReview.collectAsStateWithLifecycle()
-    val saveToWatchLaterLabel: String = "saveToWatchLater"
-    val saveToWatchedLabel: String = "saveToWatched"
-    val context = LocalContext.current
+    val userReview by movieDetailViewModel.userReview.collectAsState()
+
 
 
     Box(modifier = modifier.fillMaxWidth()) {
@@ -130,6 +138,8 @@ fun MovieDetailScreen(
                             else -> Unit
                         }
                     }
+
+
                     DetailBodyContent(
                         movieDetail = movieDetail,
                         movies = state.movies,
@@ -142,7 +152,9 @@ fun MovieDetailScreen(
                             .height(bodyItemHeight),
                         onBookMarkClick = {
                             val userId = FirebaseAuth.getInstance().currentUser?.uid
-                            if (userId != null && state.movieDetail != null) {
+                            if (userId != null)
+                            //                 && state.movieDetail != null
+                            {
                                 movieDetailViewModel.addWatchLater(
                                     labelName = saveToWatchLaterLabel,
                                 )
@@ -156,7 +168,9 @@ fun MovieDetailScreen(
                         },
                         onWatchedClick = {
                             val userId = FirebaseAuth.getInstance().currentUser?.uid
-                            if (userId != null && state.movieDetail != null) {
+                            if (userId != null)
+                            //&& state.movieDetail != null
+                            {
                                 movieDetailViewModel.addWatched(
                                     labelName = saveToWatchedLabel,
                                 )
@@ -176,7 +190,11 @@ fun MovieDetailScreen(
                         userRating = userRating,
                         viewModel = movieDetailViewModel,
                         userReview = userReview,
+                        iconButton = Icons.Default.Bookmarks,
+                        onConfirmClick = navToSignIn,
+                        onDismissClick = {}
                     )
+
 
                 }
 

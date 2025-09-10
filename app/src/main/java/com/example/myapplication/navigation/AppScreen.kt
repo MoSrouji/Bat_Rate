@@ -18,6 +18,8 @@ sealed class AppScreen() {
 
     data class TrendingMovieScreen(val route: String = ConstantAppScreen.TRENDING_MOVIE_SCREEN.name) :
         AppScreen()
+    data class AboutUsScreen(val route: String = ConstantAppScreen.ABOUT_US_SCREEN.name) :
+        AppScreen()
 
     data class MovieDetailScreen(
         val route: String = ConstantAppScreen.MOVIE_DETAIL_SCREEN.name,

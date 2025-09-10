@@ -72,21 +72,21 @@ fun MovieCardShow(
                     contentScale = ContentScale.Crop,
                     placeholder = painterResource(R.drawable.bg_image_movie)
                 )
-                MovieCard(
-                    shapes = CircleShape,
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(4.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.BookmarkAdd,
-                        contentDescription = "Bookmark",
-                        modifier = Modifier.padding(4.dp).clickable(
-                            onClick = onSavedClick
-                        ) ,
-
-                    )
-                }
+//                MovieCard(
+//                    shapes = CircleShape,
+//                    modifier = Modifier
+//                        .align(Alignment.TopEnd)
+//                        .padding(4.dp)
+//                ) {
+//                    Icon(
+//                        imageVector = Icons.Default.BookmarkAdd,
+//                        contentDescription = "Bookmark",
+//                        modifier = Modifier.padding(4.dp).clickable(
+//                            onClick = onSavedClick
+//                        ) ,
+//
+//                    )
+//                }
             }
 
             Column(

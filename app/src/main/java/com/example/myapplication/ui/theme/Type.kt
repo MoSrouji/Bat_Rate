@@ -52,7 +52,7 @@ val IbarraNovaBoldPlatinum25 =
         fontFamily = IbarraNovaFont,
         fontWeight = FontWeight.Bold,
         fontSize = 25.sp,
-        color = ColorPlatinum
+     //   color = ColorPlatinum
     )
 
 
@@ -61,7 +61,7 @@ val IbarraNovaSemiBoldGraniteGray =
         fontFamily = IbarraNovaFont,
         fontWeight = FontWeight.SemiBold,
         fontSize = 18.sp,
-        color = ColorGraniteGray
+        color = ColorGunmetal
     )
 
 
@@ -70,7 +70,7 @@ val IbarraNovaSemiBoldPlatinum16 =
         fontFamily = IbarraNovaFont,
         fontWeight = FontWeight.SemiBold,
         fontSize = 16.sp,
-        color = ColorPlatinum
+   //     color = ColorPlatinum
     )
 
 val IbarraNovaNormalGray14 =
@@ -78,7 +78,7 @@ val IbarraNovaNormalGray14 =
         fontFamily = IbarraNovaFont,
         fontWeight = FontWeight.SemiBold,
         fontSize = 16.sp,
-        color = ColorGraniteGray
+      //  color = ColorGraniteGray
     )
 
 val IbarraNovaSemiBoldPlatinum17 =
@@ -94,7 +94,7 @@ val IbarraNovaBoldPlatinum18 =
         fontFamily = IbarraNovaFont,
         fontWeight = FontWeight.Bold,
         fontSize = 18.sp,
-        color = ColorPlatinum
+     //   color = ColorPlatinum
     )
 
 val IbarraNovaSemiBoldColorVerdigris17 = TextStyle(

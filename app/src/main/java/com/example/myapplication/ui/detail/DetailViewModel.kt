@@ -37,7 +37,7 @@ class DetailViewModel @Inject constructor(
 
 
     private val _usersState = MutableStateFlow<WatchLaterUiState>(WatchLaterUiState.Idle)
-    val usersState: StateFlow<WatchLaterUiState> = _usersState
+    val usersState: StateFlow<WatchLaterUiState> = _usersState.asStateFlow()
 
     private val _ratingState = MutableStateFlow<MovieRatingUiState>(MovieRatingUiState.Loading)
     val ratingState: StateFlow<MovieRatingUiState> = _ratingState.asStateFlow()

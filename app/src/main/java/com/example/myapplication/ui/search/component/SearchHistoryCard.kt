@@ -1,5 +1,6 @@
 package com.example.myapplication.ui.search.component
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,18 +22,22 @@ fun SearchHistoryCard(
     onSearchCardClick: Unit
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth()
-            .padding(itemSpacing).height(50.dp)
-        , onClick = {onSearchCardClick},
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(itemSpacing)
+            .height(50.dp),
         shape = RectangleShape,
 
 
         ) {
 
         Text(
-            modifier = Modifier.padding(15.dp),
+            modifier = Modifier.padding(15.dp).clickable(
+                onClick = { onSearchCardClick },
+
+                ),
             text = text,
-            style = MaterialTheme.typography.bodyLarge ,
+            style = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.Bold
 
         )

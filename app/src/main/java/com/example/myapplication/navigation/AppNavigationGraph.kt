@@ -1,6 +1,7 @@
 package com.example.myapplication.navigation
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.animation.core.FastOutSlowInEasing
 
 import androidx.compose.animation.core.tween
@@ -28,6 +29,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.myapplication.ui.DrawerContent
 import com.example.myapplication.ui.TopAppBar
+import com.example.myapplication.ui.aboutUs.AboutUs
 import com.example.myapplication.ui.auth.presentaiton.authentication.signin.SignInScreen
 import com.example.myapplication.ui.auth.presentaiton.authentication.signup.SignUpScreen
 import com.example.myapplication.ui.auth.presentaiton.authentication.user_detail.UpdateUserDetailScreen
@@ -37,14 +39,12 @@ import com.example.myapplication.ui.moviesScreenDiscoverAndTrending.DiscoverMovi
 import com.example.myapplication.ui.moviesScreenDiscoverAndTrending.TrendingMoviesScreen
 import com.example.myapplication.ui.search.SearchScreen
 import com.example.myapplication.ui.auth.presentaiton.authentication.user_detail.UserDetailScreen
-import com.example.myapplication.ui.saved_movies.SavedMoviesViewModel
 import com.example.myapplication.ui.saved_movies.WatchLaterMoviesScreen
 import com.example.myapplication.ui.saved_movies.WatchedMoviesScreen
-import com.example.myapplication.ui.saved_movies.component.SavedMoviesScreen
 import com.example.myapplication.utils.K
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import kotlin.math.log
 
 object NavAnimations {
     // Default animation specs
@@ -63,6 +63,75 @@ object NavAnimations {
     )
 
 }
+
+fun navigateToHomeScreen(navController: NavHostController) {
+    navController.navigate(AppScreen.HomeScreen().route) {
+        launchSingleTop = true
+
+    }
+}
+fun navigateToSignInScreen(navController: NavHostController) {
+    navController.navigate(AppScreen.SignInScreen().route) {
+        launchSingleTop = true
+
+    }
+}
+fun navigateToSignUpScreen(navController: NavHostController) {
+    navController.navigate(AppScreen.SignUpScreen().route) {
+        launchSingleTop = true
+
+    }
+}
+
+fun navigateToUserScreen(navController: NavHostController) {
+    navController.navigate(AppScreen.UserDetailScreen().route) {
+        launchSingleTop = true
+
+    }
+}
+
+fun navigateToDiscoverMoviesScreen(navController: NavHostController) {
+    navController.navigate(AppScreen.DiscoverMovieScreen().route) {
+        launchSingleTop = true
+
+    }
+}
+
+fun navigateToTrendingMoviesScreen(navController: NavHostController) {
+    navController.navigate(AppScreen.TrendingMovieScreen().route) {
+        launchSingleTop = true
+
+    }
+}
+
+fun navigateToSearchScreen(navController: NavHostController) {
+    navController.navigate(AppScreen.SearchScreen().route) {
+        launchSingleTop = true
+
+    }
+}
+
+fun navigateToWatchLaterMoviesScreen(navController: NavHostController) {
+    navController.navigate(AppScreen.WatchLaterMoviesScreen().route) {
+        launchSingleTop = true
+
+    }
+}
+
+fun navigateToWatchedMoviesScreen(navController: NavHostController) {
+    navController.navigate(AppScreen.WatchedMoviesScreen().route) {
+        launchSingleTop = true
+
+    }
+}
+
+fun navigateToMovieDetailScreen(navController: NavHostController, id: Int) {
+    navController.navigate(AppScreen.MovieDetailScreen().getRouteWithArgs(id)) {
+        launchSingleTop = true
+
+    }
+}
+
 
 // Usage in your NavHost:
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -90,60 +159,50 @@ fun LunchMovieApp(
                     scope.launch {
                         drawerState.close()
                     }
-                    navController.navigate(
-                        AppScreen.HomeScreen().route
-
-
-                    )
+                    navigateToHomeScreen(navController)
 
                 },
                 onSearchClick = {
                     scope.launch {
                         drawerState.close()
                     }
-                    navController.navigate(
-                        AppScreen.SearchScreen().route
-                    )
+                    navigateToSearchScreen(navController)
+
                 },
                 onDiscoverMovieClick = {
                     scope.launch {
                         drawerState.close()
                     }
-                    navController.navigate(
-                        AppScreen.DiscoverMovieScreen().route
-                    )
+                    navigateToDiscoverMoviesScreen(navController)
                 },
                 onTrendingMovieClick = {
                     scope.launch {
                         drawerState.close()
                     }
-                    navController.navigate(
-                        AppScreen.TrendingMovieScreen().route
-                    )
+                    navigateToTrendingMoviesScreen(navController)
                 },
                 onWatchLaterMovieClick = {
                     scope.launch {
                         drawerState.close()
                     }
-                    navController.navigate(
-                        AppScreen.WatchLaterMoviesScreen().route
-                    )
+                    navigateToWatchLaterMoviesScreen(navController)
                 },
                 onWatchedMovieClick = {
                     scope.launch {
                         drawerState.close()
                     }
-                    navController.navigate(
-                        AppScreen.WatchedMoviesScreen().route
-                    )
+                    navigateToWatchedMoviesScreen(navController)
                 },
                 onAboutUsClick = {
                     scope.launch {
                         drawerState.close()
                     }
                     navController.navigate(
-                        AppScreen.HomeScreen().route
+                        AppScreen.AboutUsScreen().route
                     )
+                },
+                onNavigateBack = {
+                    navController.popBackStack()
                 }
             )
         },
@@ -152,6 +211,8 @@ fun LunchMovieApp(
         gesturesEnabled = false,
         scrimColor = MaterialTheme.colorScheme.background,
     ) {
+
+
         NavHost(
             navController = navController,
             startDestination = if (FirebaseAuth.getInstance().uid != null) {
@@ -167,20 +228,21 @@ fun LunchMovieApp(
             popEnterTransition = { NavAnimations.slideInFromRight() },
             popExitTransition = { NavAnimations.slideOutToLeft() }
         ) {
+
+
             composable(
                 AppScreen.SignInScreen().route,
                 enterTransition = { NavAnimations.slideInFromRight() },
                 exitTransition = { NavAnimations.slideOutToLeft() }
             ) {
 
+
                 SignInScreen(
                     navController = navController,
-                    navToHomeScreen = {
-                        navController.navigate(AppScreen.HomeScreen().route)
-                    }
+                    navToHomeScreen = { navigateToHomeScreen(navController) }
                 )
-            }
 
+            }
 
 
             composable(
@@ -193,9 +255,7 @@ fun LunchMovieApp(
                 SignUpScreen(
                     navController = navController,
                     navToHomeScreen = {
-                        navController.navigate(
-                            AppScreen.HomeScreen().route
-                        )
+                        navigateToHomeScreen(navController)
 
                     }
 
@@ -214,8 +274,14 @@ fun LunchMovieApp(
                 Scaffold(
                     topBar = {
                         TopAppBar(
-                            onSearchClick = { navController.navigate(AppScreen.SearchScreen().route) },
-                            onUserButtonClick = { navController.navigate(AppScreen.UserDetailScreen().route) },
+                            onSearchClick = {
+                                navigateToSearchScreen(navController)
+
+                            },
+                            onUserButtonClick = {
+                                navigateToUserScreen(navController)
+
+                            },
                             onMenuClick = {
                                 scope.launch {
                                     drawerState.open()
@@ -227,26 +293,15 @@ fun LunchMovieApp(
                     HomeScreen(
                         modifier = Modifier.padding(top = 25.dp),
                         onMovieClick = {
-                            navController.navigate(
-                                AppScreen.MovieDetailScreen().getRouteWithArgs(it)
-                            ) {
-
-                            }
+                            navigateToMovieDetailScreen(navController, it)
                         },
                         onDiscoverArrowClick = {
-                            navController.navigate(AppScreen.DiscoverMovieScreen().route) {
-                                launchSingleTop = true
-                                navController.navigate(AppScreen.HomeScreen().route)
-                            }
+                            navigateToDiscoverMoviesScreen(navController)
                         },
                         onTradingArrowClick = {
-                            navController.navigate(AppScreen.TrendingMovieScreen().route) {
-                                launchSingleTop = true
-                                navController.navigate(AppScreen.HomeScreen().route)
-
-                            }
-
+                            navigateToTrendingMoviesScreen(navController)
                         }
+
 
                     )
 
@@ -263,8 +318,13 @@ fun LunchMovieApp(
                 Scaffold(
                     topBar = {
                         TopAppBar(
-                            onSearchClick = { navController.navigate(AppScreen.SearchScreen().route) },
-                            onUserButtonClick = { navController.navigate(AppScreen.UserDetailScreen().route) },
+                            onSearchClick = {
+                                navigateToSearchScreen(navController)
+
+                            },
+                            onUserButtonClick = {
+                                navigateToUserScreen(navController)
+                            },
                             onMenuClick = {
                                 scope.launch {
                                     drawerState.open()
@@ -274,13 +334,7 @@ fun LunchMovieApp(
                     }) {
                     DiscoverMoviesScreen(
                         onMovieClick = {
-                            navController.navigate(
-                                AppScreen.MovieDetailScreen().getRouteWithArgs(it)
-                            ) {
-                                launchSingleTop = true
-                                navController.navigate(AppScreen.HomeScreen().route)
-
-                            }
+                            navigateToMovieDetailScreen(navController, it)
                         },
                         onNavigateUP = { navController.navigateUp() }
                     )
@@ -297,8 +351,14 @@ fun LunchMovieApp(
                 Scaffold(
                     topBar = {
                         TopAppBar(
-                            onSearchClick = { navController.navigate(AppScreen.SearchScreen().route) },
-                            onUserButtonClick = { navController.navigate(AppScreen.UserDetailScreen().route) },
+                            onSearchClick = {
+                                navigateToSearchScreen(navController)
+
+                            },
+                            onUserButtonClick = {
+                                navigateToUserScreen(navController)
+
+                            },
                             onMenuClick = {
                                 scope.launch {
                                     drawerState.open()
@@ -309,13 +369,7 @@ fun LunchMovieApp(
                     TrendingMoviesScreen(
 
                         onMovieClick = {
-                            navController.navigate(
-                                AppScreen.MovieDetailScreen().getRouteWithArgs(it)
-                            ) {
-                                launchSingleTop = true
-                                navController.navigate(AppScreen.HomeScreen().route)
-
-                            }
+                            navigateToMovieDetailScreen(navController, it)
                         },
                         onNavigateUP = { navController.navigateUp() }
                     )
@@ -330,12 +384,17 @@ fun LunchMovieApp(
                 }),
                 enterTransition = { NavAnimations.slideInFromRight() },
                 exitTransition = { NavAnimations.slideOutToLeft() }
-            ) {
+            ) {movie->
                 Scaffold(
                     topBar = {
                         TopAppBar(
-                            onSearchClick = { navController.navigate(AppScreen.SearchScreen().route) },
-                            onUserButtonClick = { navController.navigate(AppScreen.UserDetailScreen().route) },
+                            onSearchClick = {
+                                navigateToSearchScreen(navController)
+
+                            },
+                            onUserButtonClick = {
+                              navigateToUserScreen(navController)
+                            },
                             onMenuClick = {
                                 scope.launch {
                                     drawerState.open()
@@ -359,7 +418,9 @@ fun LunchMovieApp(
                         },
                         onActorClick = {
 
-                        }
+                        },
+
+                        navToSignIn = {navigateToSignInScreen(navController)}
                     )
                 }
             }
@@ -373,11 +434,23 @@ fun LunchMovieApp(
 
                 UserDetailScreen(
                     onBackClick = { navController.navigateUp() },
-                    onLogoutSuccess = { navController.navigate(AppScreen.SignInScreen().route) },
-                    navToUpdate = {
-                        navController.navigate(AppScreen.UpdateUserDetailScreen().route)
-                    }
 
+                    navToUpdate = {
+                        navController.navigate(AppScreen.UpdateUserDetailScreen().route) {
+                            launchSingleTop = true
+                        }
+                    },
+                    onMenuClick = {
+                        scope.launch {
+                            drawerState.open()
+                        }
+                    },
+                    navigateToSignIn = {
+                     navigateToSignInScreen(navController)
+                    },
+                    navigateToHome = {
+                        navigateToHomeScreen(navController)
+                    }
                 )
             }
 
@@ -389,11 +462,15 @@ fun LunchMovieApp(
             ) {
                 UpdateUserDetailScreen(
                     onBackClick = { navController.navigateUp() },
-                    onLogoutSuccess = { navController.navigate(AppScreen.SignInScreen().route) },
-
-                    )
+                    onLogoutSuccess = {navigateToSignInScreen(navController)
+                    },
+                    onMenuClick = {
+                        scope.launch {
+                            drawerState.open()
+                        }
+                    },
+                )
             }
-
 
             composable(
                 AppScreen.SearchScreen().route,
@@ -403,16 +480,8 @@ fun LunchMovieApp(
 
 
                 SearchScreen(
-                    onMovieClick = {
-                        navController.navigate(
-                            AppScreen.MovieDetailScreen().getRouteWithArgs(it)
-                        ) {
-                            launchSingleTop = true
-                            navController.navigate(AppScreen.HomeScreen().route)
-
-                        }
+                    onMovieClick = {navigateToMovieDetailScreen(navController,it)
                     },
-                    onNavigateUP = { navController.navigateUp() }
                 )
             }
 
@@ -424,8 +493,13 @@ fun LunchMovieApp(
                 Scaffold(
                     topBar = {
                         TopAppBar(
-                            onSearchClick = { navController.navigate(AppScreen.SearchScreen().route) },
-                            onUserButtonClick = { navController.navigate(AppScreen.UserDetailScreen().route) },
+                            onSearchClick = {
+                                navigateToSearchScreen(navController)
+
+                            },
+                            onUserButtonClick = {navigateToUserScreen(navController)
+
+                            },
                             onMenuClick = {
                                 scope.launch {
                                     drawerState.open()
@@ -435,11 +509,29 @@ fun LunchMovieApp(
                     }) {
                     WatchLaterMoviesScreen(
                         onMovieClick = {
-                            navController.navigate(
-                                AppScreen.MovieDetailScreen().getRouteWithArgs(it)
-
-                            )
+                           navigateToMovieDetailScreen(navController,it)
                         },
+                        navToSignIn = {
+                            navController.navigate(
+                                AppScreen.SignInScreen().route
+                            ) {
+                                launchSingleTop = true
+                                popUpTo(navController.graph.startDestinationId) {
+                                    inclusive = true
+                                }
+
+                            }
+                        },
+                        navToHome = {
+                            navController.navigate(
+                                AppScreen.HomeScreen().route
+                            ) {
+                                launchSingleTop = true
+                                popUpTo(navController.graph.startDestinationId) {
+                                    inclusive = true
+                                }
+                            }
+                        }
                     )
 
 
@@ -456,8 +548,13 @@ fun LunchMovieApp(
                 Scaffold(
                     topBar = {
                         TopAppBar(
-                            onSearchClick = { navController.navigate(AppScreen.SearchScreen().route) },
-                            onUserButtonClick = { navController.navigate(AppScreen.UserDetailScreen().route) },
+                            onSearchClick = {
+                                navigateToSearchScreen(navController)
+
+                            },
+                            onUserButtonClick = {
+                               navigateToUserScreen(navController)
+                            },
                             onMenuClick = {
                                 scope.launch {
                                     drawerState.open()
@@ -467,19 +564,45 @@ fun LunchMovieApp(
                     }) {
                     WatchedMoviesScreen(
                         onMovieClick = {
-                            navController.navigate(
-                                AppScreen.MovieDetailScreen().getRouteWithArgs(it)
-
-                            )
+                           navigateToMovieDetailScreen(navController,it)
                         },
+                        navToSignIn = {
+                            navController.navigate(
+                                AppScreen.SignInScreen().route
+                            ) {
+                                launchSingleTop = true
+                                popUpTo(navController.graph.startDestinationId) {
+                                    inclusive = true
+                                }
+                            }
+                        },
+                        navToHome = {
+                            navController.navigate(
+                                AppScreen.HomeScreen().route
+
+                            ) {
+                                launchSingleTop = true
+                                popUpTo(navController.graph.startDestinationId) {
+                                    inclusive = true
+                                }
+                            }
+                        }
                     )
 
 
                 }
             }
+            composable(  AppScreen.AboutUsScreen().route,
+                enterTransition = { NavAnimations.slideInFromRight() },
+                exitTransition = { NavAnimations.slideOutToLeft() }
+            ){
+                AboutUs()
+
+            }
 
 
         }
+
     }
 
 

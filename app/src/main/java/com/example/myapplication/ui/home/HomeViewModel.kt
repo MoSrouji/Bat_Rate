@@ -4,12 +4,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.movie.domain.models.Movie
 import com.example.myapplication.movie.domain.repository.MovieRepository
+import com.example.myapplication.save_list.domain.repository.SaveListRepo
+import com.example.myapplication.ui.saved_movies.SavedMoviesState
 import com.example.myapplication.ui.saved_movies.SavedMoviesViewModel
 import com.example.myapplication.ui.search.SearchScreen
 import com.example.myapplication.ui.search.SearchViewModel
 import com.example.myapplication.utils.collectAndHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -19,10 +22,13 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val repository: MovieRepository ,
 
+
+
 ): ViewModel() {
 
     private val _homeState = MutableStateFlow(HomeState())
     val homeState = _homeState.asStateFlow()
+
 
 
     init {
@@ -31,6 +37,10 @@ class HomeViewModel @Inject constructor(
     init {
         fetchTrendingMovies()
     }
+
+
+
+
 
 
 
@@ -82,20 +92,12 @@ class HomeViewModel @Inject constructor(
 
         }
 
+
+
     }
 
-    // to handle movie selection
-fun selectedMovie(movie: Movie){
-    _homeState.update {
-        it.copy(movie = movie)
-    }
-}
-    fun getSelectedMovie(): Movie?{
-        return _homeState.value.movie
-    }
-    fun newfun(){
-        getSelectedMovie()?.title
-    }
+
+
 
 
 }

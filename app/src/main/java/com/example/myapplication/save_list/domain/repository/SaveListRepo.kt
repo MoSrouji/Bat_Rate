@@ -17,7 +17,7 @@ interface SaveListRepo{
     suspend fun clearSearchHistory(labelName: String)
     suspend fun getSearchHistory(labelName: String): List<String>
     suspend fun getSavedMovies(labelName: String): List<Int>
-
+    suspend fun deleteMovieFromWatch(movieId: Int , labelName: String)
 
 
 }

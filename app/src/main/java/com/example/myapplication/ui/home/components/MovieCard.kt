@@ -1,14 +1,18 @@
 package com.example.myapplication.ui.home.components
 
+import android.graphics.drawable.shapes.Shape
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Shapes
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.myapplication.ui.home.itemSpacing
 
@@ -33,11 +37,38 @@ fun MovieCard(
 
     }
 }
+@Composable
+fun MovieCardTwo(
+    modifier: Modifier = Modifier,
+    bgColor : Color = Color.Black.copy(.4f),
+    content :@Composable () -> Unit
+) {
+    Card (
+        shape = RectangleShape,
+        colors = CardDefaults.cardColors(
+            containerColor = bgColor,
+            contentColor = Color.White
+        ),
+        modifier = modifier
+
+    ){
+        content()
+
+
+    }
+}
 
 @Preview(showBackground = true)
 @Composable
 fun MovieCardPreview() {
-    MovieCard {
-        Text(text = "Action", modifier = Modifier.padding(itemSpacing))
-    }}
+    Column {
+        MovieCard {
+            Text(text = "Action", modifier = Modifier.padding(itemSpacing))
+        }
+        MovieCardTwo {
+            Text(text = "Action", modifier = Modifier.padding(itemSpacing))
+        }
+    }
+
+}
 

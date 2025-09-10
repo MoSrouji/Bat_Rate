@@ -14,6 +14,7 @@ enum class ConstantAppScreen( route: String) {
     UPDATE_USER_DETAIL_SCREEN("update_user_detail_screen"),
     WATCH_LATER_SCREEN("watch_later_screen"),
     WATCHED_SCREEN("watch_later_screen"),
+    ABOUT_US_SCREEN("about_us_screen"),
 
 
 }

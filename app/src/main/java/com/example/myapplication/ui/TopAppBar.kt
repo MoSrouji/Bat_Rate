@@ -57,7 +57,7 @@ fun TopAppBar(
             }
         },
         actions = {
-            IconButton(onClick = onSearchClick) {
+            IconButton(onClick =  onSearchClick) {
                 Icon(
                     imageVector = Icons.Filled.Search,
                     contentDescription = "Search",
@@ -85,7 +85,8 @@ fun DrawerContent(
     onTrendingMovieClick: () -> Unit,
     onWatchLaterMovieClick: () -> Unit,
     onWatchedMovieClick: () -> Unit,
-    onAboutUsClick: () -> Unit
+    onAboutUsClick: () -> Unit,
+    onNavigateBack:()-> Unit
 ) {
     Column(
         modifier = Modifier
@@ -306,7 +307,8 @@ fun DrawerCardPreview() {
         onTrendingMovieClick = {},
         onWatchLaterMovieClick = {},
         onWatchedMovieClick = {},
-        onAboutUsClick = {}
+        onAboutUsClick = {} ,
+        onNavigateBack = {}
     )
 }
 

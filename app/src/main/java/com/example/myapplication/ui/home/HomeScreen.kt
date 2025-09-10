@@ -1,6 +1,7 @@
 package com.example.myapplication.ui.home
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.interaction.collectIsDraggedAsState
@@ -11,6 +12,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.BookmarkAdd
+import androidx.compose.material.icons.filled.Bookmarks
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,11 +30,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.HiltViewModelFactory
 import com.example.myapplication.movie.domain.models.Movie
+import com.example.myapplication.movie_detail.domain.models.MovieDetail
 import com.example.myapplication.navigation.NavAnimations
 import com.example.myapplication.ui.components.LoadingView
+import com.example.myapplication.ui.detail.DetailViewModel
 import com.example.myapplication.ui.home.components.BodyContent
 import com.example.myapplication.ui.home.components.TopContent
+import com.example.myapplication.ui.saved_movies.SavedMoviesViewModel
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
 
 val defaultPadding = 16.dp
@@ -40,11 +50,14 @@ val itemSpacing = 8.dp
 fun HomeScreen(
     modifier: Modifier = Modifier,
     homeViewModel: HomeViewModel = hiltViewModel(),
+    savedViewModel: DetailViewModel = hiltViewModel(),
+    loadSavedMoviesViewModel: SavedMoviesViewModel = hiltViewModel(),
     onMovieClick: (id: Int) -> Unit,
     onDiscoverArrowClick: () -> Unit,
     onTradingArrowClick: () -> Unit,
 
-) {
+    ) {
+
 
     var isAutoScrolling by remember {
         mutableStateOf(true)
@@ -56,6 +69,14 @@ fun HomeScreen(
         pageCount = { state.discoverMovies.size }
     )
     val isDragged by pagerState.interactionSource.collectIsDraggedAsState()
+
+    val saveToWatchLaterLabel: String = "saveToWatchLater"
+
+    val savedMoviesState by loadSavedMoviesViewModel.watchLaterState.collectAsStateWithLifecycle()
+    val listIDs = savedMoviesState.movieIds
+    val context = LocalContext.current
+
+
 
 
     LaunchedEffect(key1 = pagerState.currentPage) {
@@ -74,6 +95,8 @@ fun HomeScreen(
     }
 
     Box(modifier = modifier) {
+
+
         AnimatedVisibility(
             visible = state.error != null,
             enter = NavAnimations.slideInFromRight(),
@@ -141,30 +164,42 @@ fun HomeScreen(
                     onMovieClick = onMovieClick,
                     onTradingArrowClick = onTradingArrowClick,
                     onDiscoverArrowClick = onDiscoverArrowClick,
-                 onBookMarkClick = { }  )
+                    onBookMarkClick = {
+                        val userId = FirebaseAuth.getInstance().currentUser?.uid
+                        if (userId != null) {
+                            savedViewModel.addWatchLater(
+                                labelName = saveToWatchLaterLabel,
+                                it
+                            )
+                               Toast.makeText(context, "Movie saved", Toast.LENGTH_SHORT).show()
 
+                        } else {
+                            Toast.makeText(
+                                context,
+                                if (userId == null) "Please sign in" else "Movie data not available",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    },
+                    iconButton = { id ->
+
+                        if (savedMoviesState.movieIds.contains(id)) {
+                            Icons.Default.Bookmarks
+                        } else {
+                            Icons.Default.BookmarkAdd
+                        }
+
+
+                    }
+
+                )
 
 
             }
         }
 
 
-
     }
     LoadingView(isLoading = state.isLoading)
 }
 
-
-
-
-
-
-
-
-
-//    val onBookMarkClick: (Movie) -> Unit = { movie ->
-//        homeViewModel.selectedMovie(movie)
-//    }
-//       //val context = LocalContext.current
-////
-////    val saveToWatchLaterLabel: String = "saveToWatchLater"

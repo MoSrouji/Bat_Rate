@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.example.myapplication.ui.saved_movies.component
 
 
@@ -16,12 +18,15 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BookmarkAdd
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
@@ -31,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -41,6 +47,7 @@ import coil.request.ImageRequest
 import com.example.myapplication.R
 import com.example.myapplication.movie_detail.domain.models.MovieDetail
 import com.example.myapplication.ui.home.components.MovieCard
+import com.example.myapplication.ui.home.components.MovieCardTwo
 import com.example.myapplication.ui.home.itemSpacing
 import com.example.myapplication.utils.K
 
@@ -48,7 +55,8 @@ import com.example.myapplication.utils.K
 fun MovieDetailCard(
     modifier: Modifier = Modifier,
     movie: MovieDetail,
-    onMovieClick: (Int) -> Unit
+    onMovieClick: (Int) -> Unit,
+    onDeleteClick:(Int)-> Unit
 
 ) {
     val imageRequest = ImageRequest.Builder(LocalContext.current)
@@ -70,36 +78,39 @@ fun MovieDetailCard(
                         .shadow(elevation = 4.dp),
                     contentScale = ContentScale.Crop,
                     placeholder = painterResource(R.drawable.bg_image_movie)
-                )
-                MovieCard(
-                    shapes = CircleShape,
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(4.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.BookmarkAdd,
-                        contentDescription = "Bookmark",
-                        modifier = Modifier.padding(4.dp)
-                    )
-                }
-            }
+                )}
 
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(2.dp)
             ) {
-                Text(
-                    text = movie.title,
-                    style = MaterialTheme.typography.titleMedium,
-                    maxLines = 1,
-                    fontWeight = FontWeight.Bold,
-                    modifier = modifier
-                        .padding(4.dp)
+                Row(modifier = Modifier.fillMaxWidth() ,
+                    verticalAlignment = Alignment.CenterVertically ,
+                    horizontalArrangement = Arrangement.SpaceBetween) {
+                    Text(
+                        text = movie.title,
+                        style = MaterialTheme.typography.titleMedium,
+                        maxLines = 1,
+                        fontWeight = FontWeight.Bold,
+                        modifier = modifier
+                            .padding(4.dp)
 
 
-                )
+                    )
+
+                    IconButton(
+                        onClick = {onDeleteClick(movie.id)}
+                    ) {
+                       Icon(
+                           imageVector = Icons.Default.Remove  ,
+                           contentDescription = "Remove"
+
+                       )
+
+                    }
+
+                }
 
 
                 HorizontalDivider(
@@ -107,6 +118,37 @@ fun MovieDetailCard(
                     thickness = 1.dp,
                     color = Color.Black
                 )
+
+                MovieCardTwo {
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        movie.genreIds.forEachIndexed { index, genreText ->
+                            if (index != 0) {
+                                VerticalDivider(modifier = Modifier.height(16.dp))
+
+                            }
+                            Text(
+                                text = genreText,
+                                modifier = Modifier
+                                    .padding(6.dp)
+                                    .weight(1f),
+                                maxLines = 1
+
+                            )
+                            if (index != movie.genreIds.lastIndex) {
+                                VerticalDivider(modifier = Modifier.height(16.dp))
+                            }
+
+                        }
+
+
+                    }
+                }
+
+                Spacer(modifier = modifier.padding(2.dp))
+
 
                 Row(
                     horizontalArrangement = Arrangement.Center,
@@ -138,13 +180,18 @@ fun MovieDetailCard(
 
                     )
                 }
-
                 Spacer(modifier = modifier.padding(2.dp))
+
+
+
+
+
+
                 Card(
                     modifier = modifier
                         .padding(2.dp)
                         .shadow(elevation = 4.dp),
-                    shape = RoundedCornerShape(corner = MaterialTheme.shapes.small.topStart) ,
+                    shape = RoundedCornerShape(corner = MaterialTheme.shapes.small.topStart),
                     onClick = { }
                 ) {
                     Text(
@@ -154,58 +201,7 @@ fun MovieDetailCard(
                     )
                 }
                 Spacer(modifier = modifier.padding(2.dp))
-                Row {
-                    Card(
-                        onClick = {}, modifier = modifier
-                            .padding(2.dp)
-                    ) {
-                        Row(
-                            modifier = modifier,
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.StarBorder,
-                                contentDescription = "Rating",
-                                modifier = modifier.size(20.dp)
-                            )
-                            Text(
-                                text = "Rate",
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = Color.Blue.copy(alpha = .5f),
-                                fontWeight = FontWeight.Bold,
-                                modifier = modifier.padding(
-                                    start = 4.dp,
-                                    end = 4.dp,
-                                    top = 4.dp,
-                                    bottom = 4.dp
-                                )
 
-                            )
-                        }}
-                    Spacer(modifier = modifier.padding(itemSpacing))
-                    Card(onClick = {}, modifier = modifier) {
-                        Row(
-                            modifier = modifier,
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.RemoveRedEye,
-                                contentDescription = "Rating",
-                                modifier = modifier.padding((4.dp))
-                                    .size(20.dp)
-
-                            )
-                            Text(
-                                text = "Mark as watched",
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = Color.Blue.copy(alpha = .5f),
-                                fontWeight = FontWeight.Bold,
-                            )
-                        }
-                    }
-                }
             }
         }
     }
@@ -216,3 +212,56 @@ fun MovieDetailCard(
     )
 }
 
+
+//                Row {
+//                    Card(
+//                        onClick = {}, modifier = modifier
+//                            .padding(2.dp)
+//                    ) {
+//                        Row(
+//                            modifier = modifier,
+//                            verticalAlignment = Alignment.CenterVertically,
+//                            horizontalArrangement = Arrangement.Center
+//                        ) {
+//                            Icon(
+//                                imageVector = Icons.Default.StarBorder,
+//                                contentDescription = "Rating",
+//                                modifier = modifier.size(20.dp)
+//                            )
+//                            Text(
+//                                text = "Rate",
+//                                style = MaterialTheme.typography.bodyLarge,
+//                                color = Color.Blue.copy(alpha = .5f),
+//                                fontWeight = FontWeight.Bold,
+//                                modifier = modifier.padding(
+//                                    start = 4.dp,
+//                                    end = 4.dp,
+//                                    top = 4.dp,
+//                                    bottom = 4.dp
+//                                )
+//
+//                            )
+//                        }}
+//                    Spacer(modifier = modifier.padding(itemSpacing))
+//                    Card(onClick = {}, modifier = modifier) {
+//                        Row(
+//                            modifier = modifier,
+//                            verticalAlignment = Alignment.CenterVertically,
+//                            horizontalArrangement = Arrangement.Center
+//                        ) {
+//                            Icon(
+//                                imageVector = Icons.Default.RemoveRedEye,
+//                                contentDescription = "Rating",
+//                                modifier = modifier.padding((4.dp))
+//                                    .size(20.dp)
+//
+//                            )
+////                            Text(
+////                                text = "Mark as watched",
+////                                style = MaterialTheme.typography.bodyLarge,
+////                                color = Color.Blue.copy(alpha = .5f),
+////                                fontWeight = FontWeight.Bold,
+////                            )
+//                        }
+//                    }
+//                }

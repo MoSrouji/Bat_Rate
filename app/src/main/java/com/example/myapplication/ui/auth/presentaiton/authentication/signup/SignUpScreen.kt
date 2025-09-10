@@ -11,6 +11,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -126,7 +127,8 @@ Box(modifier = Modifier.fillMaxSize().background(ColorGunmetal))
         //Create Account Text
         Text(
             text = stringResource(id = R.string.create_account),
-            style = IbarraNovaBoldPlatinum25
+            style = IbarraNovaBoldPlatinum25 ,
+            color = colorResource(R.color.white)
         )
 
         Spacer(modifier = Modifier.height(5.dp))
@@ -134,7 +136,10 @@ Box(modifier = Modifier.fillMaxSize().background(ColorGunmetal))
         //Please Fill Text
         Text(
             text = stringResource(id = R.string.please_sign_in_to_continue),
-            style = IbarraNovaBoldPlatinum18
+            style = IbarraNovaBoldPlatinum18 ,
+            color = colorResource(R.color.white)
+
+
         )
 
         Spacer(modifier = Modifier.height(40.dp))

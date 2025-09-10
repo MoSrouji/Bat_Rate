@@ -26,6 +26,7 @@ fun UpdateUserDetailScreen(
     viewModel: UserDetailViewModel = hiltViewModel(),
     onBackClick: () -> Unit,
     onLogoutSuccess :()-> Unit ,
+    onMenuClick:()-> Unit
 
     ) {
     val user by viewModel.userState
@@ -52,8 +53,8 @@ fun UpdateUserDetailScreen(
     Scaffold(
         topBar = {
             TopBar(
-                onLogOutClick = {viewModel.logout()}
-
+                onLogOutClick = { viewModel.logout() },
+                onMenuClick = {onMenuClick}
             )
         }
     ) { innerPadding ->

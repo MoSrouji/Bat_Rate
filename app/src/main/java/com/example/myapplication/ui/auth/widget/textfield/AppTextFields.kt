@@ -28,9 +28,10 @@ fun AuthenticationTextField(
         onValueChange = onValueChange,
         textStyle = IbarraNovaSemiBoldPlatinum16,
         hintTextStyle = IbarraNovaNormalGray14,
-        color = ColorAmericanPurple,
+      color = ColorAmericanPurple,
         cornerRadius = 15.dp,
-        type = type
+        type = type ,
+
     )
 
 }
