@@ -1,15 +1,19 @@
 package com.example.myapplication.ui.auth.presentaiton.authentication.signin
 
+import android.provider.CalendarContract
 import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -26,9 +30,11 @@ import com.example.myapplication.ui.auth.widget.loading.LoadingScreen
 import com.example.myapplication.ui.auth.widget.textfield.AuthenticationTextField
 
 @Composable
-fun SignInScreen(navController: NavController,
-                 navToHomeScreen: () -> Unit ,
-                 viewModel: SignInViewModel = hiltViewModel()) {
+fun SignInScreen(
+    navController: NavController,
+    navToHomeScreen: () -> Unit,
+    viewModel: SignInViewModel = hiltViewModel()
+) {
 
     val context = LocalContext.current
     val signInState = viewModel.signInState.value
@@ -106,6 +112,8 @@ fun SignInScreen(navController: NavController,
             //Login Text
             Text(
                 text = stringResource(id = R.string.login),
+                color = colorResource(R.color.white)
+
             )
 
             Spacer(modifier = Modifier.height(10.dp))
@@ -113,6 +121,9 @@ fun SignInScreen(navController: NavController,
             // Please Text
             Text(
                 text = stringResource(id = R.string.please_sign_in_to_continue),
+                color = colorResource(R.color.white)
+
+
             )
 
             Spacer(modifier = Modifier.height(15.dp))
@@ -169,6 +180,8 @@ fun SignInScreen(navController: NavController,
             //Forget Password Text
             Text(
                 text = stringResource(id = R.string.forget_password),
+                color = colorResource(R.color.white)
+
             )
 
             Spacer(modifier = Modifier.height(60.dp))
@@ -182,20 +195,31 @@ fun SignInScreen(navController: NavController,
                 //Don't have an account Text
                 Text(
                     text = stringResource(id = R.string.do_not_have_an_account),
+                    color = colorResource(R.color.white)
+
                 )
 
                 Spacer(modifier = Modifier.width(10.dp))
                 //Sign Up Text
                 Text(
                     text = stringResource(id = R.string.sign_up),
+                    color = colorResource(R.color.white)
+
+
                 )
 
             }
-            Spacer(modifier = Modifier.width(10.dp).padding(bottom = 10.dp))
-            Text(text = "Or Continue As Guest" , modifier =  Modifier.clickable{
+            Spacer(
+                modifier = Modifier
+                    .width(10.dp)
+                    .padding(bottom = 10.dp)
+            )
+            Text(text = "Or Continue As Guest", modifier = Modifier.clickable {
                 navToHomeScreen()
-               viewModel.restUser()
-            })
+                viewModel.restUser()
+            },                               color = colorResource(R.color.white)
+
+            )
 
         }
 

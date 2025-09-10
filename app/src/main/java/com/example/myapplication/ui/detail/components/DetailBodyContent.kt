@@ -1,5 +1,6 @@
 package com.example.myapplication.ui.detail.components
 
+import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.ui.graphics.Color
@@ -48,6 +49,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.myapplication.comment_review.domain.entities.MovieRating
 import com.example.myapplication.movie.domain.models.Movie
 import com.example.myapplication.movie_detail.domain.models.Review
@@ -58,6 +60,9 @@ import com.example.myapplication.ui.home.components.MovieCard
 import com.example.myapplication.ui.home.components.MovieCoverImage
 import com.example.myapplication.ui.home.defaultPadding
 import com.example.myapplication.ui.home.itemSpacing
+import com.example.myapplication.utils.AlertDialogSample
+import com.google.firebase.auth.FirebaseAuth
+import androidx.core.net.toUri
 
 @Composable
 fun DetailBodyContent(
@@ -75,7 +80,10 @@ fun DetailBodyContent(
     viewModel: DetailViewModel,
     ratingState: MovieRatingUiState,
     userRating: Float?,
-    userReview: String?
+    userReview: String?,
+    iconButton: ImageVector,
+    onConfirmClick: () -> Unit,
+    onDismissClick: () -> Unit
 ) {
     LazyColumn(
         modifier = modifier
@@ -246,17 +254,20 @@ fun DetailBodyContent(
 //                    )
 
                     MovieRatingReviewScreen(
-                        viewModel = viewModel,
+                        //  viewModel = viewModel,
                         userRating = userRating,
                         userReview = userReview,
                         ratingState = ratingState,
-                    )
+                        onConfirmClick = onConfirmClick,
+
+                        )
 
                     MoreLikeThis(
                         fetchMovies = fetchMovies,
                         isMovieLoading = isMovieLoading,
                         movies = movies,
                         onMovieClick = onMovieClick,
+                        iconButton = iconButton
                     )
                 }
 
@@ -405,6 +416,7 @@ fun MoreLikeThis(
     isMovieLoading: Boolean,
     movies: List<Movie>,
     onMovieClick: (Int) -> Unit,
+    iconButton: ImageVector
 ) {
 
     LaunchedEffect(key1 = true) {
@@ -432,8 +444,13 @@ fun MoreLikeThis(
                 movies
             ) {
                 MovieCoverImage(
-                    movie = it, onMovieClick = onMovieClick,
-                    onBookMarkClick = {})
+                    movie = it,
+                    onMovieClick = onMovieClick,
+                    onSaveButtonClick = {
+
+
+                    },
+                    iconButton = { iconButton })
             }
         }
 
@@ -443,10 +460,11 @@ fun MoreLikeThis(
 
 @Composable
 fun MovieRatingReviewScreen(
-    viewModel: DetailViewModel,
-    ratingState: MovieRatingUiState ,
+    viewModel: DetailViewModel = hiltViewModel(),
+    ratingState: MovieRatingUiState,
     userRating: Float?,
-    userReview: String?
+    userReview: String?,
+    onConfirmClick: () -> Unit,
 ) {
 
     var reviewText by remember { mutableStateOf(TextFieldValue(userReview ?: "")) }
@@ -454,12 +472,23 @@ fun MovieRatingReviewScreen(
     var selectedRating by remember {
         mutableStateOf<Float?>(null)
     }
+    var openAlert by remember {
+        mutableStateOf<Boolean>(false)
+    }
 
     Column(
         modifier = Modifier
-           // .padding(16.dp)
+            // .padding(16.dp)
             .fillMaxWidth() // Changed from fillMaxSize to fillMaxWidth
     ) {
+        if (openAlert) {
+            AlertDialogSample(
+                title = "Please Sign In",
+                text = "Please Sign In To Review This Movie",
+                onConfirmClick = onConfirmClick,
+                onDismissClick = { openAlert = false }
+            )
+        }
 
 
         when (ratingState) {
@@ -468,10 +497,10 @@ fun MovieRatingReviewScreen(
                     modifier = Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.Center
                 ) {
-Column {
-                    CircularProgressIndicator()
-                    Text("Loading")
-                }
+                    Column {
+                        CircularProgressIndicator()
+                        Text("Loading")
+                    }
                 }
             }
 
@@ -530,8 +559,6 @@ Column {
                         }
 
 
-
-
                     }
 
                 }
@@ -557,20 +584,26 @@ Column {
                         onValueChange = { reviewText = it },
                         modifier = Modifier.fillMaxWidth(),
                         placeholder = { Text("Write your review here...") },
-                        maxLines = 5 ,
+                        maxLines = 5,
                     )
 
 
                     Button(
                         onClick = {
+                            if (FirebaseAuth.getInstance().uid != null) {
 
 
-                            //viewModel.submitReview(reviewText.text)
-                            selectedRating?.let { rating ->
-                                viewModel.rateMovie(rating)
-                                viewModel.submitReview(reviewText.text)
+                                //viewModel.submitReview(reviewText.text)
+                                selectedRating?.let { rating ->
+                                    viewModel.rateMovie(rating)
+                                    viewModel.submitReview(reviewText.text)
 
-                            } ?: run {
+                                } ?: run {
+
+                                }
+                            } else {
+
+                                openAlert = true
 
                             }
 
@@ -584,16 +617,14 @@ Column {
                         )
                     }
                 }
-                    }
-                }
-
-
+            }
         }
 
 
-        }
+    }
 
 
+}
 
 
 @Composable
@@ -631,32 +662,35 @@ private fun RatingSummary(rating: MovieRating?) {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth()
     ) {
-        Card(modifier = Modifier.padding(10.dp).shadow(elevation = 16.dp) ,
+        Card(
+            modifier = Modifier
+                .padding(10.dp)
+                .shadow(elevation = 16.dp),
             shape = RoundedCornerShape(defaultPadding),
 
 
-        ) {
+            ) {
             Column(modifier = Modifier.padding(defaultPadding)) {
 
-        Text(
-            text = "Average Rating",
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(bottom = 4.dp)
-        )
+                Text(
+                    text = "Average Rating",
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
 
-        Text(
-            text = "%.1f".format(averageRating?.times(2)),
-            style = MaterialTheme.typography.displaySmall,
-            color = MaterialTheme.colorScheme.primary
-        )
+                Text(
+                    text = "%.1f".format(averageRating?.times(2)),
+                    style = MaterialTheme.typography.displaySmall,
+                    color = MaterialTheme.colorScheme.primary
+                )
 
-        Text(
-            text = "Based on $ratingCount ratings",
-            style = MaterialTheme.typography.bodyMedium,
-            color = Color.Gray,
-            modifier = Modifier.padding(top = 8.dp)
-        )
+                Text(
+                    text = "Based on $ratingCount ratings",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.Gray,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
+        }
     }
-        }
-        }
 }

@@ -14,15 +14,34 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.myapplication.auth.domain.entities.Response
 import com.example.myapplication.ui.auth.presentaiton.authentication.user_detail.component.TopBar
 import com.example.myapplication.ui.auth.presentaiton.authentication.user_detail.component.UserDetailContent
+import com.example.myapplication.utils.AlertDialogSample
+import com.google.firebase.auth.FirebaseAuth
 
+//This Active :)
 @Composable
 fun UserDetailScreen(
     viewModel: UserDetailViewModel = hiltViewModel(),
     onBackClick: () -> Unit,
-    onLogoutSuccess :()-> Unit ,
-    navToUpdate:()-> Unit
+
+    navToUpdate:()-> Unit,
+    onMenuClick:()-> Unit ,
+    navigateToSignIn :()-> Unit ,
+    navigateToHome:()-> Unit
+
 
 ) {
+
+
+    if (FirebaseAuth.getInstance().uid == null){
+        AlertDialogSample(
+            title = "SignIn",
+            text = "Please SignIn To See Your User Profile ",
+            onConfirmClick = navigateToSignIn ,
+            onDismissClick = navigateToHome
+        )
+    }
+
+
     val user by viewModel.userState
     val isLoading by viewModel.loadingState
     val error by viewModel.errorState
@@ -31,7 +50,7 @@ fun UserDetailScreen(
     LaunchedEffect(logOutState){
         when(logOutState){
             is Response.Success->{
-                onLogoutSuccess()
+               navigateToSignIn
                 viewModel.resetLogoutState()
             }
             is Response.Error -> {
@@ -47,7 +66,8 @@ fun UserDetailScreen(
     Scaffold(
         topBar = {
             TopBar(
-                onLogOutClick = {viewModel.logout()}
+                onLogOutClick = {viewModel.logout()} ,
+                onMenuClick = onMenuClick
 
             )
         }

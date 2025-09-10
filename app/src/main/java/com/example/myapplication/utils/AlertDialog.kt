@@ -20,10 +20,10 @@ import com.example.myapplication.ui.theme.ColorGunmetal
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlertDialogSample(
-    title : String ,
-    text : String ,
-    onConfirmClick:()-> Unit ,
-
+    title: String,
+    text: String,
+    onConfirmClick: () -> Unit,
+    onDismissClick: () -> Unit
 
 
 ) {
@@ -34,9 +34,7 @@ fun AlertDialogSample(
     if (openDialog.value) {
 
         AlertDialog(
-            onDismissRequest = {
-                openDialog.value = false
-            },
+            onDismissRequest = onDismissClick,
             title = {
                 Text(text = title)
             },
@@ -47,23 +45,24 @@ fun AlertDialogSample(
             },
 
             confirmButton = {
-                TextButton(onClick = {}) { Text("Confirm") }
+                TextButton(onClick = onConfirmClick) { Text("Confirm") }
             },
             dismissButton = {
-                TextButton(onClick = {
-                    openDialog.value=false
-                }) { Text("Dismiss") }
+                TextButton(
+                    onClick = onDismissClick
+
+                ) { Text("Dismiss") }
             },
             icon = {
-                Image(painterResource(R.drawable.batman__streamline_cyber),
-                    contentDescription = null)
-            }
-            , 
-            tonalElevation = 5.dp ,
+                Image(
+                    painterResource(R.drawable.batman__streamline_cyber),
+                    contentDescription = null
+                )
+            },
+            tonalElevation = 5.dp,
 
 
-
-        )
+            )
     }
 
 }
@@ -72,9 +71,10 @@ fun AlertDialogSample(
 @Composable
 fun AlertDialogPreview() {
     AlertDialogSample(
-        title = "SignIn" ,
-        text = " You Cant Write an Review Before Sign up Please Sign up And Try Again " ,
-        onConfirmClick = {} ,
-        )
+        title = "SignIn",
+        text = " You Cant Write an Review Before Sign up Please Sign up And Try Again ",
+        onConfirmClick = {},
+        onDismissClick = {}
+    )
 
 }

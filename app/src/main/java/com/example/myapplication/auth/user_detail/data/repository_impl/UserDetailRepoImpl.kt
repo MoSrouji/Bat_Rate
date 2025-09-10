@@ -4,8 +4,8 @@ import com.example.myapplication.auth.domain.entities.User
 import com.example.myapplication.auth.network.NetworkConstant.COLLECTION_NAME_USERS
 import com.example.myapplication.auth.user_detail.domain.repository.UserDetailRepo
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -35,23 +35,60 @@ class UserDetailRepoImpl @Inject constructor(
 
 
 
-    override suspend fun updateUser(user: User? , newEmail: String?): Boolean {
-       val currentUser = auth.currentUser?:return false
+//    override suspend fun updateUser(user: User? , newEmail: String?): Boolean {
+//       val currentUser = auth.currentUser?:return false
+//
+//        return try {
+//            newEmail.let {
+//                currentUser.updateEmail(user?.email!!).await()
+//            }
+//
+//            db.collection(COLLECTION_NAME_USERS).document(user?.userId!!).set(user).await()
+//
+//            true
+//        }catch (e: Exception) {
+//            e.printStackTrace()
+//            false
+//        }
+override suspend fun updateUser(user: User?, newEmail: String?): Boolean {
+    val currentUser = auth.currentUser ?: return false
+    val userId = currentUser.uid
 
-        return try {
-            newEmail.let {
-                currentUser.updateEmail(user?.email!!).await()
+    return try {
+
+        // 2. Update email in Firebase Auth (if provided)
+        newEmail?.let { email ->
+            if (email != currentUser.email) {
+                currentUser.updateEmail(email).await()
             }
-
-            db.collection(COLLECTION_NAME_USERS).document(user?.userId!!).set(user).await()
-
-            true
-        }catch (e: Exception) {
-            e.printStackTrace()
-            false
         }
+
+//        // 3. Update password in Firebase Auth (if provided)
+//        newPassword?.let { password ->
+//            currentUser.updatePassword(password).await()
+//        }
+
+        // 4. Prepare updated user data for Firestore
+        val updatedUser = user?.copy(
+            email = newEmail ?: user.email,
+            userId = userId // Ensure we keep the same user ID
+        )
+
+        // 5. Update Firestore using merge to preserve existing data
+        updatedUser?.let {
+            db.collection(COLLECTION_NAME_USERS)
+                .document(userId)
+                .set(it, SetOptions.merge())
+                .await()
+        }
+
+        true
+    } catch (e: Exception) {
+        e.printStackTrace()
+        false
+    }
+}
 
 
 
     }
-}

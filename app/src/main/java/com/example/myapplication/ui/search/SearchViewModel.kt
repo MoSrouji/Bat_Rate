@@ -38,6 +38,8 @@ class SearchViewModel @Inject constructor(
     var filteredMoviesList: MutableList<String> = mutableListOf()
 
 
+
+
     fun onBtnCLick() {
         searchMovies(query)
         saveBrowseData()
@@ -134,6 +136,25 @@ class SearchViewModel @Inject constructor(
             it.copy(
                 tempSearchMovies = it.searchMovies
             )
+        }
+    }
+
+    fun sortAscending() {
+        viewModelScope.launch {
+            _searchState.update { state ->
+                state.copy(
+                    searchMovies = state.searchMovies.sortedBy { it.voteAverage }
+                )
+            }
+        }
+    }
+    fun sortDescending() {
+        viewModelScope.launch {
+            _searchState.update { state->
+                state.copy(
+                    searchMovies = state.searchMovies.sortedByDescending { it.voteAverage }
+                )
+            }
         }
     }
 

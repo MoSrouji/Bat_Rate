@@ -105,6 +105,22 @@ class SaveListRepoImpl @Inject constructor(
         }
     }
 
+    override suspend fun deleteMovieFromWatch(movieId: Int, labelName: String) {
+        try {
+            val userId = FirebaseAuth.getInstance().uid ?: return
+            val userDocRef = db.collection(NetworkConstant.COLLECTION_NAME_USERS)
+                .document(userId)
+
+            // Update the document directly using arrayRemove
+            val updates = hashMapOf<String, Any>(
+                labelName to FieldValue.arrayRemove(movieId)
+            )
+
+            userDocRef.update(updates).await()
+        } catch (e: Exception) {
+            throw Exception("Failed to delete movie from watch list: ${e.message}")
+        }
+    }
 
     // To clear search history
     override suspend fun clearSearchHistory(labelName: String) {

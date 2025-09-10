@@ -14,9 +14,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import androidx.lifecycle.viewModelScope
-import com.example.myapplication.auth.domain.repositories.AuthRepository
-import com.example.myapplication.auth.user_detail.domain.repository.UserDetailRepo
-import com.example.myapplication.ui.detail.WatchLaterUiState
 
 @HiltViewModel
 class SavedMoviesViewModel @Inject constructor(
@@ -36,7 +33,12 @@ class SavedMoviesViewModel @Inject constructor(
         loadSavedMovies("saveToWatched",_watchedState)
     }
 
-   internal fun loadSavedMovies(label: String , state: MutableStateFlow<SavedMoviesState> ) {
+    fun reLoad(){
+        loadSavedMovies("saveToWatchLater",_watchLaterState)
+
+    }
+
+  fun loadSavedMovies(label: String , state: MutableStateFlow<SavedMoviesState>  = _watchLaterState ) {
         viewModelScope.launch {
             state.update { it.copy(isLoading = true, error = null) }
 
@@ -70,6 +72,37 @@ class SavedMoviesViewModel @Inject constructor(
     }
 
 
+    fun deleteMovie(movieId: Int, label: String, state: MutableStateFlow<SavedMoviesState> = if (label == "saveToWatchLater"){_watchLaterState}else{_watchedState}){
+        viewModelScope.launch {
+            state.update {
+                it.copy(isLoading = true , error = null)
+
+            }
+            try {
+                savedRepository.deleteMovieFromWatch(movieId , label)
+                state.update {currentState->
+                    currentState.copy(
+                        isLoading = false ,
+                        error = null ,
+                        movieDetailList = currentState.movieDetailList?.filter { it.id != movieId } ?: emptyList()
+
+
+                    )
+                }
+            }catch (e: Exception){
+                Log.e("SavedMovies", "Error loading saved movies: ${e.message}", e)
+                _watchLaterState.update {
+                    it.copy(
+                        isLoading = false,
+                        error = e.message ?: "Failed to load saved movies",
+                    )
+                }
+            }
+
+        }
+
+
+    }
 
 
 
@@ -82,7 +115,7 @@ class SavedMoviesViewModel @Inject constructor(
 //    }
 
 
-    private fun fetchMovieDetails(movieIds: List<Int> , state: MutableStateFlow<SavedMoviesState>) {
+    private fun fetchMovieDetails(movieIds: List<Int> , state: MutableStateFlow<SavedMoviesState> = _watchLaterState) {
         viewModelScope.launch {
             state.update { it.copy(isMovieLoading = true, error = null) }
 

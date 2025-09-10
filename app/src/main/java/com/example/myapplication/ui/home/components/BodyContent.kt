@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.myapplication.movie.domain.models.Movie
@@ -30,7 +31,8 @@ fun BodyContent(modifier: Modifier = Modifier,
                 onMovieClick:(id: Int) -> Unit,
                 onDiscoverArrowClick:() ->Unit,
                 onTradingArrowClick:()->Unit ,
-                onBookMarkClick:(Movie)-> Unit
+                onBookMarkClick:(id:Int)-> Unit ,
+                iconButton:(id:Int)-> ImageVector
               ) {
     LazyColumn (modifier = modifier) {
         item {
@@ -61,7 +63,8 @@ fun BodyContent(modifier: Modifier = Modifier,
                         MovieCoverImage(
                             movie = it ,
                             onMovieClick =onMovieClick ,
-                            onBookMarkClick = {onBookMarkClick(it)}
+                         onSaveButtonClick = onBookMarkClick,
+                            iconButton = iconButton
                          )
                     }
                 }
@@ -92,10 +95,12 @@ fun BodyContent(modifier: Modifier = Modifier,
                         MovieCoverImage(
                             movie = it ,
                             onMovieClick =onMovieClick ,
-                            onBookMarkClick = {onBookMarkClick(it)})
+                           onSaveButtonClick = onBookMarkClick,
+                            iconButton = iconButton)
 
                     }
                 }
+
 
                 Spacer(modifier= Modifier.padding(horizontal = 100.dp))
 

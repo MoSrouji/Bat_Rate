@@ -1,11 +1,17 @@
 package com.example.myapplication.ui.search
 
 
+import android.media.MicrophoneDirection
+import android.media.MicrophoneInfo
+import android.speech.tts.Voice
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,6 +19,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardVoice
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -35,6 +42,8 @@ import com.example.myapplication.ui.home.itemSpacing
 import com.example.myapplication.ui.moviesScreenDiscoverAndTrending.MovieCardShow
 import com.example.myapplication.ui.search.component.SearchHistoryCard
 import com.example.myapplication.ui.search.component.SegmentedButtonMultiSelectSample
+import com.example.myapplication.ui.search.component.SortSearchResult
+import com.google.android.gms.common.api.GoogleApi
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,7 +52,6 @@ fun SearchScreen(
     modifier: Modifier = Modifier,
     viewModel: SearchViewModel = hiltViewModel(),
     onMovieClick: (id: Int) -> Unit,
-    onNavigateUP: () -> Unit,
 
 
     ) {
@@ -95,6 +103,7 @@ fun SearchScreen(
 
 
                             )
+
                     },
                     expanded = viewModel.expanded,
                     onExpandedChange = { expanded -> viewModel.onExpandedChanged(expanded) },
@@ -102,16 +111,24 @@ fun SearchScreen(
                     modifier = Modifier.padding(5.dp)
                 ) {
 
-                    LazyColumn( modifier = Modifier ,
-                        horizontalAlignment = Alignment.CenterHorizontally ,
-                        verticalArrangement = Arrangement.SpaceBetween) {
+                    LazyColumn(
+                        modifier = Modifier,
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.SpaceBetween
+                    ) {
 
                         items(viewModel.browseHistory) {
 
                             SearchHistoryCard(
-                                modifier = Modifier.fillMaxWidth() ,
-                                text = it ,
-                                onSearchCardClick = viewModel.onTextChanged(it)
+                                modifier = Modifier.fillMaxWidth(),
+                                text = it,
+                                onTextClick = {txt->
+                                    viewModel.onTextChanged(txt)
+                                    viewModel.onBtnCLick()
+                                    viewModel.expanded = false
+
+                                  //  viewModel.onTextChanged(it)
+                                }
                             )
                         }
 
@@ -120,7 +137,13 @@ fun SearchScreen(
 
 
 
-                    SegmentedButtonMultiSelectSample()
+                SegmentedButtonMultiSelectSample()
+                Spacer(modifier = Modifier.padding(itemSpacing))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
                     Text(
                         text = "The Result : ",
                         style = MaterialTheme.typography.titleLarge,
@@ -128,22 +151,26 @@ fun SearchScreen(
 
                         )
 
-                    LazyColumn(modifier = Modifier.padding(vertical = itemSpacing)) {
-                        items(state.searchMovies) {
-                            MovieCardShow(
-                                movie = it,
-                                onMovieClick = onMovieClick,
-                                onSavedClick = {},
-                            )
-                        }
+
+                    SortSearchResult()
+
+                }
+                LazyColumn(modifier = Modifier.padding(vertical = itemSpacing)) {
+                    items(state.searchMovies) {
+                        MovieCardShow(
+                            movie = it,
+                            onMovieClick = onMovieClick,
+                            onSavedClick = {},
+                        )
                     }
                 }
-
-
             }
+
+
         }
-        LoadingView(isLoading = state.isLoading)
     }
+    LoadingView(isLoading = state.isLoading)
+}
 
 
 

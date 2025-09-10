@@ -77,7 +77,7 @@ fun UserDetailContent(
         }
 
         if (user == null) {
-            Text("No user data available", style = MaterialTheme.typography.bodyMedium)
+        //    Text("No user data available", style = MaterialTheme.typography.bodyMedium)
             return
         }
 
